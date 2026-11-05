@@ -78,8 +78,10 @@ h2 { font: 400 clamp(30px, 4.4vw, 44px)/1.1 var(--display); margin: 0 0 26px; le
 /* ekran görüntüleri */
 .shots { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding-block: 6px 18px; }
 .shots figure { margin: 0; flex: 0 0 min(240px, 62vw); scroll-snap-align: start; }
-.shots img { border-radius: 26px; border: 3px solid #2a3466; box-shadow: 0 18px 40px rgba(0, 0, 0, .4); aspect-ratio: 440 / 956; width: 100%; }
+.shots img { border-radius: 26px; border: 3px solid #2a3466; box-shadow: 0 18px 40px rgba(0, 0, 0, .4); aspect-ratio: 440 / 956; width: 100%; height: auto; display: block; }
 .shots figcaption { color: var(--muted); font-size: 15px; text-align: center; margin-top: 10px; }
+/* geniş ekranda beş görüntü kaydırmadan yan yana sığar */
+@media (min-width: 980px) { .shots { display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; overflow: visible; } }
 
 /* modlar */
 .chips { display: flex; flex-wrap: wrap; gap: 10px; }
