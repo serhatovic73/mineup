@@ -8,6 +8,7 @@
     root.dataset.lang = l; root.lang = l;
     document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === l)));
     const t = document.querySelector(`meta[name="title-${l}"]`); if (t) document.title = t.content;
+    document.dispatchEvent(new Event('langchange'));
   };
   apply(lang);
   document.addEventListener('click', e => {

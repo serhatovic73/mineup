@@ -7,142 +7,145 @@
 <meta name="title-en" content="MineUp – Climb to the sky">
 <meta name="title-tr" content="MineUp – Gökyüzüne tırman">
 <meta name="description" content="MineUp is a free vertical climbing game: leap between rock walls with your pickaxe, collect crystals and climb as high as you can. 32 characters, 10 game modes.">
-<meta name="theme-color" content="#0c1330">
+<meta name="theme-color" content="#2f74dc">
 <meta property="og:title" content="MineUp">
 <meta property="og:description" content="Leap between rock walls, collect crystals and climb to the sky. 32 characters, 10 game modes.">
 <meta property="og:image" content="assets/header.jpg">
 <link rel="icon" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/climb.css">
+<!-- Tırmanış sahnesi yalnızca JS varsa ve hareket azaltma istenmemişse açılır; yoksa sayfa düz akar -->
+<script>if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('climb');</script>
 <script src="assets/site.js" defer></script>
+<script src="assets/game-data.js" defer></script>
+<script src="assets/climb.js" defer></script>
 </head>
 <body>
-<header class="nav">
-  <div class="wrap">
-    <a class="brand" href="./"><img src="assets/icon-256.png" alt="" width="36" height="36">MineUp</a>
-    <nav class="nav-links" aria-label="Main">
-      <a class="hide-sm" href="#features"><span lang="en">Features</span><span lang="tr">Özellikler</span></a>
-      <a class="hide-sm" href="#screens"><span lang="en">Screenshots</span><span lang="tr">Görseller</span></a>
-      <a href="play/"><span lang="en">Play</span><span lang="tr">Oyna</span></a>
-      <a href="support.html"><span lang="en">Support</span><span lang="tr">Destek</span></a>
-      <span class="lang" role="group" aria-label="Language"><button type="button" data-set="en" aria-pressed="true">EN</button><button type="button" data-set="tr" aria-pressed="false">TR</button></span>
-    </nav>
+<canvas id="world" aria-hidden="true"></canvas>
+
+<header class="hud">
+  <a class="hud-brand" href="./" aria-label="MineUp"><img src="assets/icon-256.png" alt="" width="44" height="44"></a>
+  <div class="hud-stats" aria-hidden="true">
+    <span class="pill pill-alt"><svg width="20" height="24" viewBox="0 0 20 24"><path d="M10 1 19 12h-5v11H6V12H1z" fill="#ffc531" stroke="#7a3f00" stroke-width="2" stroke-linejoin="round"/></svg><b id="hud-m">0</b> m</span>
+    <span class="pill"><img src="assets/game/gold.webp" alt="" width="18" height="24"><b id="hud-gold">0</b></span>
   </div>
+  <nav class="hud-nav" aria-label="Main">
+    <a class="hud-link" href="#characters" data-go="characters"><span lang="en">Characters</span><span lang="tr">Karakterler</span></a>
+    <a class="hud-link" href="#modes" data-go="modes"><span lang="en">Modes</span><span lang="tr">Modlar</span></a>
+    <a class="hud-link" href="support.html"><span lang="en">Support</span><span lang="tr">Destek</span></a>
+    <span class="lang" role="group" aria-label="Language"><button type="button" data-set="en" aria-pressed="true">EN</button><button type="button" data-set="tr" aria-pressed="false">TR</button></span>
+    <a class="hud-play" href="play/"><span lang="en">PLAY</span><span lang="tr">OYNA</span></a>
+  </nav>
 </header>
 
-<main>
-  <section class="hero">
-    <div class="wrap">
-      <div class="hero-art"><img src="assets/header.jpg" alt="MineUp logo with the explorer hanging from the letter P by his pickaxe, between two crystal rock walls" width="1920" height="823"></div>
-      <h1>
-        <span lang="en">Grab your pickaxe. <span class="gold">Climb to the sky.</span></span>
-        <span lang="tr">Kazmanı kap. <span class="gold">Gökyüzüne tırman.</span></span>
-      </h1>
-      <p class="lead">
-        <span lang="en">Tap to leap between two rock walls, dig in with your pickaxe and keep going up. Dodge thorns, falling rocks and mischievous monkeys on the way.</span>
-        <span lang="tr">Dokun, iki kaya duvarı arasında zıpla, kazmanı kayaya geçir ve yukarı çıkmaya devam et. Yolda dikenlerden, düşen kayalardan ve yaramaz maymunlardan kaç.</span>
-      </p>
-      <div class="ctas">
-        <a class="btn btn-gold" href="play/"><svg width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5v19L19 11z" fill="#4a2400"/></svg><span lang="en">Play in browser</span><span lang="tr">Tarayıcıda oyna</span></a>
-        <span class="btn btn-store" aria-label="App Store, coming soon">
-          <svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><path fill="#eef0fa" d="M18.2 13.8c0-3 2.5-4.5 2.6-4.6-1.4-2.1-3.6-2.4-4.4-2.4-1.9-.2-3.7 1.1-4.6 1.1-1 0-2.4-1.1-4-1.1-2 0-3.9 1.2-5 3.1-2.1 3.7-.5 9.2 1.6 12.2 1 1.5 2.2 3.1 3.8 3.1 1.5-.1 2.1-1 4-1 1.8 0 2.3 1 3.9 1 1.6 0 2.7-1.5 3.7-3 1.2-1.7 1.6-3.3 1.7-3.4-.1 0-3.3-1.3-3.3-5zM15.2 4.9c.8-1 1.4-2.4 1.2-3.8-1.2.1-2.6.8-3.5 1.8-.8.9-1.4 2.3-1.2 3.7 1.3.1 2.7-.7 3.5-1.7z"/></svg>
-          <span class="col"><small><span lang="en">Coming soon</span><span lang="tr">Çok yakında</span></small>App Store</span>
-        </span>
+<main id="stage">
+
+  <section class="scene scene-hero" id="top">
+    <h1 class="hero-logo"><img src="assets/game/logo.webp" alt="MineUp" width="1400" height="485"></h1>
+    <p class="hero-tag"><span lang="en">Grab your pickaxe. Climb to the sky.</span><span lang="tr">Kazmanı kap. Gökyüzüne tırman.</span></p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="play/"><svg width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5v19L19 11z" fill="#4a2400"/></svg><span lang="en">PLAY NOW</span><span lang="tr">ŞİMDİ OYNA</span></a>
+    </div>
+    <p class="hero-soon"><span lang="en">Free · Google Play and App Store coming soon</span><span lang="tr">Ücretsiz · Google Play ve App Store'a çok yakında</span></p>
+    <button class="scroll-hint" type="button" data-go="how" aria-label="Scroll">
+      <span class="chev" aria-hidden="true"></span>
+      <span lang="en">Scroll to climb</span><span lang="tr">Kaydır ve tırman</span>
+    </button>
+  </section>
+
+  <section class="scene" id="how">
+    <div class="panel panel-how">
+      <h2 class="title"><span lang="en">ONE TAP</span><span lang="tr">TEK DOKUNUŞ</span></h2>
+      <p class="lead"><span lang="en">Tap to leap to the other wall, dig in and keep going up. You slowly slide while you hang on, so don't stop.</span><span lang="tr">Dokun, karşı duvara zıpla, kazmanı geçir ve yukarı çıkmaya devam et. Duvarda yavaşça kayarsın, o yüzden durma.</span></p>
+      <ul class="pickups">
+        <li><img src="assets/game/gold.webp" alt="" width="46" height="60" loading="lazy"><b><span lang="en">Gold</span><span lang="tr">Altın</span></b><small><span lang="en">unlocks characters</span><span lang="tr">karakter açar</span></small></li>
+        <li><img src="assets/game/purple.webp" alt="" width="60" height="57" loading="lazy"><b><span lang="en">Crystals</span><span lang="tr">Kristal</span></b><small><span lang="en">for the rare ones</span><span lang="tr">nadirleri için</span></small></li>
+        <li><img src="assets/game/bubble-magnet.webp" alt="" width="60" height="60" loading="lazy"><b><span lang="en">Magnet</span><span lang="tr">Mıknatıs</span></b><small><span lang="en">pulls in gold</span><span lang="tr">altını çeker</span></small></li>
+        <li><img src="assets/game/bubble-shield.webp" alt="" width="60" height="60" loading="lazy"><b><span lang="en">Shield</span><span lang="tr">Kalkan</span></b><small><span lang="en">takes one hit</span><span lang="tr">darbeyi alır</span></small></li>
+        <li><img src="assets/game/bubble-boost.webp" alt="" width="60" height="60" loading="lazy"><b><span lang="en">Rocket</span><span lang="tr">Roket</span></b><small><span lang="en">shoots you up</span><span lang="tr">yukarı fırlatır</span></small></li>
+      </ul>
+      <p class="tip"><span lang="en">Try it here: tap the sky and your climber jumps. Tap the gold to grab it.</span><span lang="tr">Burada da dene: gökyüzüne dokun, karakterin zıplasın. Altınlara dokunup topla.</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="characters">
+    <div class="panel panel-chars">
+      <h2 class="title"><span lang="en">32 CHARACTERS</span><span lang="tr">32 KARAKTER</span></h2>
+      <div class="chars-body">
+        <div class="char-show">
+          <button class="round prev" type="button" data-step="-1" aria-label="Previous">‹</button>
+          <div class="char-stage"><img id="char-big" src="assets/game/chars/explorer-stand.webp" alt="" width="400" height="400"></div>
+          <button class="round next" type="button" data-step="1" aria-label="Next">›</button>
+          <div class="char-info" aria-live="polite">
+            <b id="char-name" class="char-name">Explorer</b>
+            <span id="char-tool" class="char-tool">Pickaxe</span>
+            <p class="char-ab"><b id="char-ab"></b> <span id="char-desc"></span></p>
+          </div>
+        </div>
+        <div id="char-grid" class="char-grid" role="group" aria-label="Characters"></div>
+      </div>
+      <p class="tip"><span lang="en">Pick one: it takes over the climb on this page.</span><span lang="tr">Birini seç: bu sayfadaki tırmanışa o devam etsin.</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="modes">
+    <div class="panel panel-modes">
+      <h2 class="title"><span lang="en">10 GAME MODES</span><span lang="tr">10 OYUN MODU</span></h2>
+      <div id="mode-grid" class="mode-grid"></div>
+    </div>
+  </section>
+
+  <section class="scene" id="danger">
+    <div class="panel panel-danger">
+      <h2 class="title"><span lang="en">WATCH OUT</span><span lang="tr">DİKKAT ET</span></h2>
+      <p class="lead"><span lang="en">The higher you go, the wilder it gets. Morning turns to sunset, then a starry night.</span><span lang="tr">Yükseldikçe işler kızışır. Sabah gün batımına, gün batımı yıldızlı geceye döner.</span></p>
+      <ul class="foes">
+        <li><img src="assets/game/monkey.webp" alt="" loading="lazy" width="105" height="191"><b><span lang="en">Monkey</span><span lang="tr">Maymun</span></b></li>
+        <li><img src="assets/game/saw.webp" alt="" loading="lazy" width="168" height="168"><b><span lang="en">Saw</span><span lang="tr">Testere</span></b></li>
+        <li><img src="assets/game/fly-bird.webp" alt="" loading="lazy"><b><span lang="en">Bird</span><span lang="tr">Kuş</span></b></li>
+        <li><img src="assets/game/fly-bee.webp" alt="" loading="lazy"><b><span lang="en">Giant Bee</span><span lang="tr">Dev Arı</span></b></li>
+        <li><img src="assets/game/fly-bat.webp" alt="" loading="lazy"><b><span lang="en">Bat</span><span lang="tr">Yarasa</span></b></li>
+        <li><img src="assets/game/fly-eagle.webp" alt="" loading="lazy"><b><span lang="en">Eagle</span><span lang="tr">Kartal</span></b></li>
+        <li><img src="assets/game/fly-owl.webp" alt="" loading="lazy"><b><span lang="en">Snowy Owl</span><span lang="tr">Kar Baykuşu</span></b></li>
+        <li><img src="assets/game/fly-firebird.webp" alt="" loading="lazy"><b><span lang="en">Firebird</span><span lang="tr">Ateş Kuşu</span></b></li>
+        <li><img src="assets/game/fly-crow.webp" alt="" loading="lazy"><b><span lang="en">Crow</span><span lang="tr">Karga</span></b></li>
+        <li><img src="assets/game/fly-ufo.webp" alt="" loading="lazy"><b>UFO</b></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="scene" id="try">
+    <div class="panel panel-try">
+      <div class="phone">
+        <img id="phone-shot" src="assets/shots/2.jpg" alt="MineUp gameplay" width="660" height="1434">
+        <a class="btn btn-gold phone-play" id="phone-play" href="play/"><svg width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5v19L19 11z" fill="#4a2400"/></svg><span lang="en">PLAY</span><span lang="tr">OYNA</span></a>
+      </div>
+      <div class="try-text">
+        <h2 class="title"><span lang="en">PLAY IT RIGHT HERE</span><span lang="tr">HEMEN BURADA OYNA</span></h2>
+        <p class="lead"><span lang="en">No download, no sign-up. The full game runs in your browser, and it's free.</span><span lang="tr">İndirme yok, üyelik yok. Oyunun tamamı tarayıcında çalışıyor, üstelik ücretsiz.</span></p>
       </div>
     </div>
   </section>
 
-  <section id="features">
-    <div class="wrap">
-      <p class="eyebrow"><span lang="en">What's inside</span><span lang="tr">Neler var</span></p>
-      <h2><span lang="en">Every climb is different</span><span lang="tr">Her tırmanış farklı</span></h2>
-      <div class="grid">
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="8" r="5" fill="#ffc531"/><path d="M3 24c1-6 5-9 10-9s9 3 10 9z" fill="#ffc531"/></svg></div>
-          <h3><span lang="en">32 characters</span><span lang="tr">32 karakter</span></h3>
-          <p><span lang="en">Explorer, Ninja, Janissary, Firefighter, Panda, Alien and more. Each one has its own gear and a special ability.</span><span lang="tr">Kaşif, Ninja, Yeniçeri, İtfaiyeci, Panda, Uzaylı ve daha fazlası. Her birinin kendi ekipmanı ve özel yeteneği var.</span></p>
-        </article>
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="3" y="3" width="9" height="9" rx="2" fill="#c45cff"/><rect x="14" y="3" width="9" height="9" rx="2" fill="#7fd3ff"/><rect x="3" y="14" width="9" height="9" rx="2" fill="#ff7a2a"/><rect x="14" y="14" width="9" height="9" rx="2" fill="#7dff9a"/></svg></div>
-          <h3><span lang="en">10 game modes</span><span lang="tr">10 oyun modu</span></h3>
-          <p><span lang="en">Time Attack, Crystal Rush, Ice Mountain, Lava Escape, Moving Walls, Hardcore and a new Daily Challenge every day.</span><span lang="tr">Zamana Karşı, Kristal Avı, Buz Dağı, Lavdan Kaç, Hareketli Duvarlar, Hardcore ve her gün yeni bir Günlük Görev.</span></p>
-        </article>
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="7" fill="#ffb38a"/><path d="M13 1v4M13 21v4M1 13h4M21 13h4" stroke="#ffb38a" stroke-width="2.4" stroke-linecap="round"/></svg></div>
-          <h3><span lang="en">A world that changes</span><span lang="tr">Değişen bir dünya</span></h3>
-          <p><span lang="en">Climb from a bright morning sky through the sunset into a starry night, past floating islands and waterfalls.</span><span lang="tr">Parlak bir sabah gökyüzünden gün batımına, oradan yıldızlı geceye; uçan adaların ve şelalelerin yanından geç.</span></p>
-        </article>
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M2 14c4-7 8-7 11-2 3-5 7-5 11 2-4-2-7-1-11 4-4-5-7-6-11-4z" fill="#eef0fa"/></svg></div>
-          <h3><span lang="en">Creatures everywhere</span><span lang="tr">Her yerde canlılar</span></h3>
-          <p><span lang="en">Birds, giant bees, eagles, snowy owls, fire birds and even UFOs, plus monkeys that knock you off the wall.</span><span lang="tr">Kuşlar, dev arılar, kartallar, kar baykuşları, ateş kuşları, hatta UFO'lar ve seni duvardan düşüren maymunlar.</span></p>
-        </article>
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 22 9v8l-9 7-9-7V9z" fill="#ffc531"/><path d="M13 7l4 3v6l-4 3-4-3v-6z" fill="#fff3b0"/></svg></div>
-          <h3><span lang="en">Gold and crystals</span><span lang="tr">Altın ve kristaller</span></h3>
-          <p><span lang="en">Collect gold, blue and purple crystals to unlock new characters. Magnets, shields and rockets help you go higher.</span><span lang="tr">Yeni karakterlerin kilidini açmak için altın, mavi ve mor kristal topla. Mıknatıs, kalkan ve roket daha yükseğe çıkmana yardım eder.</span></p>
-        </article>
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M4 22 13 4l9 18z" fill="none" stroke="#7dff9a" stroke-width="2.6" stroke-linejoin="round"/><circle cx="13" cy="16" r="2.4" fill="#7dff9a"/></svg></div>
-          <h3><span lang="en">Easy to learn</span><span lang="tr">Öğrenmesi kolay</span></h3>
-          <p><span lang="en">One tap to jump. A landing marker shows where you will land, and a short tutorial teaches you the rest.</span><span lang="tr">Zıplamak için tek dokunuş. İniş halkası nereye ineceğini gösterir, kısa bir eğitim gerisini öğretir.</span></p>
-        </article>
-      </div>
+  <section class="scene scene-summit" id="summit">
+    <div class="panel panel-summit">
+      <h2 class="title"><span lang="en">HOW HIGH CAN YOU CLIMB?</span><span lang="tr">NE KADAR YÜKSEĞE ÇIKABİLİRSİN?</span></h2>
+      <p class="lead score" id="summit-score" hidden></p>
+      <a class="btn btn-gold" href="play/"><svg width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5v19L19 11z" fill="#4a2400"/></svg><span lang="en">PLAY NOW</span><span lang="tr">ŞİMDİ OYNA</span></a>
+      <p class="hero-soon"><span lang="en">Google Play and App Store coming soon</span><span lang="tr">Google Play ve App Store'a çok yakında</span></p>
+      <footer class="foot">
+        <span>© 2026 MineUp</span>
+        <nav aria-label="Footer">
+          <a href="privacy.html"><span lang="en">Privacy Policy</span><span lang="tr">Gizlilik Politikası</span></a>
+          <a href="support.html"><span lang="en">Support</span><span lang="tr">Destek</span></a>
+          <a href="terms.html"><span lang="en">Terms of Service</span><span lang="tr">Hizmet Şartları</span></a>
+          <a href="about.html"><span lang="en">About</span><span lang="tr">Hakkımızda</span></a>
+        </nav>
+      </footer>
     </div>
   </section>
 
-  <section id="screens">
-    <div class="wrap">
-      <p class="eyebrow"><span lang="en">Screenshots</span><span lang="tr">Ekran görüntüleri</span></p>
-      <h2><span lang="en">See it in action</span><span lang="tr">Oyundan kareler</span></h2>
-      <div class="shots" tabindex="0" aria-label="Screenshots">
-        <figure><img src="assets/shots/1.jpg" alt="Main menu with the Classic mode and the Kanka character selected" loading="lazy" width="660" height="1434"><figcaption><span lang="en">Main menu</span><span lang="tr">Ana menü</span></figcaption></figure>
-        <figure><img src="assets/shots/2.jpg" alt="Passing 100 metres between the rock walls, surrounded by gold and crystals" loading="lazy" width="660" height="1434"><figcaption><span lang="en">Climb between the walls</span><span lang="tr">Duvarlar arasında tırman</span></figcaption></figure>
-        <figure><img src="assets/shots/3.jpg" alt="Lava Escape mode: the firefighter clings to the wall just above the rising lava" loading="lazy" width="660" height="1434"><figcaption><span lang="en">Escape the rising lava</span><span lang="tr">Yükselen lavdan kaç</span></figcaption></figure>
-        <figure><img src="assets/shots/4.jpg" alt="Character selection with the Janissary" loading="lazy" width="660" height="1434"><figcaption><span lang="en">Pick your climber</span><span lang="tr">Tırmanıcını seç</span></figcaption></figure>
-        <figure><img src="assets/shots/5.jpg" alt="Game modes screen" loading="lazy" width="660" height="1434"><figcaption><span lang="en">10 game modes</span><span lang="tr">10 oyun modu</span></figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <p class="eyebrow"><span lang="en">Game modes</span><span lang="tr">Oyun modları</span></p>
-      <h2><span lang="en">Pick your challenge</span><span lang="tr">Meydan okumanı seç</span></h2>
-      <div class="chips">
-        <span class="chip"><b>Classic</b> <span lang="en">climb as high as you can</span><span lang="tr">olabildiğince yükseğe</span></span>
-        <span class="chip"><b>Time Attack</b> <span lang="en">3 minutes</span><span lang="tr">3 dakika</span></span>
-        <span class="chip"><b>Endless</b> <span lang="en">never stops getting harder</span><span lang="tr">hiç durmadan zorlaşır</span></span>
-        <span class="chip"><b>Crystal Rush</b> <span lang="en">grab every crystal</span><span lang="tr">kristalleri topla</span></span>
-        <span class="chip"><b>No Pickaxe</b> <span lang="en">gloves only, double gold</span><span lang="tr">sadece eldiven, altın x2</span></span>
-        <span class="chip"><b>Hardcore</b> <span lang="en">no power-ups, triple gold</span><span lang="tr">güç yok, altın x3</span></span>
-        <span class="chip"><b>Ice Mountain</b> <span lang="en">slippery walls</span><span lang="tr">kaygan duvarlar</span></span>
-        <span class="chip"><b>Lava Escape</b> <span lang="en">the lava is rising</span><span lang="tr">lav yükseliyor</span></span>
-        <span class="chip"><b>Moving Walls</b> <span lang="en">walls and saw blades move</span><span lang="tr">duvarlar ve testereler kayar</span></span>
-        <span class="chip"><b>Daily Challenge</b> <span lang="en">new every day</span><span lang="tr">her gün yeni</span></span>
-      </div>
-    </div>
-  </section>
-
-  <section class="band">
-    <div class="wrap">
-      <h2><span lang="en">How high can you climb?</span><span lang="tr">Ne kadar yükseğe çıkabilirsin?</span></h2>
-      <p><span lang="en">MineUp is free to play. Try it right now in your browser.</span><span lang="tr">MineUp ücretsiz. Hemen şimdi tarayıcında dene.</span></p>
-      <a class="btn btn-gold" href="play/"><svg width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5v19L19 11z" fill="#4a2400"/></svg><span lang="en">Play now</span><span lang="tr">Şimdi oyna</span></a>
-    </div>
-  </section>
 </main>
-
-<footer>
-  <div class="wrap">
-    <span>© 2026 MineUp</span>
-    <nav aria-label="Footer">
-      <a href="privacy.html"><span lang="en">Privacy Policy</span><span lang="tr">Gizlilik Politikası</span></a>
-      <a href="support.html"><span lang="en">Support</span><span lang="tr">Destek</span></a>
-      <a href="play/"><span lang="en">Play in browser</span><span lang="tr">Tarayıcıda oyna</span></a>
-      <a href="about.html"><span lang="en">About</span><span lang="tr">Hakkımızda</span></a>
-    </nav>
-  </div>
-</footer>
+<div id="track" aria-hidden="true"></div>
 </body>
 </html>
