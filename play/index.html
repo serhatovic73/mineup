@@ -3092,8 +3092,8 @@ const MAX_REVIVES = 1;  // bir oyunda kaç kez reklamla devam edilebilir
 // Uygulama kimliği ayrıca android/app/src/main/res/values/strings.xml (admob_app_id) içinde.
 // Şu an Google'ın test kimlikleri var: bunlarla gelir olmaz. npm run release test kimliği görürse durur.
 const AD_IDS = {
-  android: { rewarded: 'ca-app-pub-3940256099942544/5224354917', interstitial: 'ca-app-pub-3940256099942544/1033173712' },
-  ios: { rewarded: 'ca-app-pub-3940256099942544/1712485313', interstitial: 'ca-app-pub-3940256099942544/4411468910' },
+  android: { rewarded: 'ca-app-pub-4431268505909003/1809168357', interstitial: 'ca-app-pub-4431268505909003/9294720796' },
+  ios: { rewarded: 'ca-app-pub-4431268505909003/7028659263', interstitial: 'ca-app-pub-4431268505909003/5826249072' },
 };
 const IS_IOS = !!(window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform() === 'ios');
 const AD_UNIT_ID = AD_IDS[IS_IOS ? 'ios' : 'android'].rewarded;
